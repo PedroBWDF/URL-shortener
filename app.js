@@ -35,10 +35,13 @@ app.post('/shorten', (req, res) => {
   saveToDataFile({ shortCode, originalUrl });
 
   // 縮短後的網址
-  const shortUrl = generateShortCode();
+  // const shortUrl = generateShortCode();
+  // const shortUrl = `http://localhost:${port}/${shortCode}
 
-  // Render the short URL
-  res.render('short', { shortUrl:`http://localhost:${port}/${shortCode}` })
+  // // Render the short URL
+  // res.render('short', { shortUrl:`http://localhost:${port}/${shortCode}` })
+  const shortUrl = `http://localhost:${port}/${shortCode}`;
+  res.render('short', { shortUrl });
 })
 
 //使用者存取縮短網址的路由處理
@@ -47,7 +50,7 @@ app.get('/:shortCode', (req, res) => {
   const originalUrl = getOriginalUrl(shortCode);
 
   if (originalUrl) {
-    res.redirect(originalUrl);
+    res.redirect(`http://${originalUrl}`);
     console.log(`Redirecting to: ${originalUrl}`);
   } else {
     // res.redirect('/');
@@ -104,7 +107,8 @@ function getShortUrlByOriginalUrl(originalUrl) {
     const dataList = JSON.parse(dataFileContent);
 
     const matchingData = dataList.find((data) => data.originalUrl === originalUrl);
-    return matchingData ? matchingData.shortCode : null
+    // return matchingData ? matchingData.shortCode : null
+    return matchingData ? `http://localhost:${port}/${matchingData.shortCode}` : null
   } catch (error) {
     // 如果檔案不存在或解析失敗，回傳 null
     return null;
